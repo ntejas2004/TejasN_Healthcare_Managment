@@ -1,0 +1,9 @@
+{
+    "status": "SUCCESS",
+    "execution_time_seconds": 4.25,
+    "patients_processed": 71518,
+    "encounters_processed": 101766,
+    "mappings_processed": 63,
+    "cleaned_data_directory": "C:\\Users\\Tejas N\\Desktop\\prodapt_final_task\\data\\cleaned",
+    "processed_timestamp": "2026-10-10 14:56:55"
+}
