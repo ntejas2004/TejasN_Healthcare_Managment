@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getEncounters, createEncounter, updateEncounter, deleteEncounter } from '../api/client';
-import { Plus, Search, Trash2, Edit, ChevronLeft, ChevronRight, X, Filter } from 'lucide-react';
+import { getEncounters, createEncounter, updateEncounter, deleteEncounter, downloadExport } from '../api/client';
+import { Plus, Search, Trash2, Edit, ChevronLeft, ChevronRight, X, Filter, Download, FileSpreadsheet } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const EncounterList = () => {
@@ -152,6 +152,22 @@ const EncounterList = () => {
             <option value=">30">Readmitted &gt;30 Days</option>
             <option value="NO">No Readmission</option>
           </select>
+
+          <button
+            className="btn-secondary"
+            onClick={() => downloadExport('/export/encounters/csv', 'encounters_export.csv')}
+            title="Export Encounter data to CSV"
+          >
+            <Download size={15} /> Export CSV
+          </button>
+
+          <button
+            className="btn-secondary"
+            onClick={() => downloadExport('/export/encounters/excel', 'encounters_export.xlsx')}
+            title="Export Encounter data to Excel"
+          >
+            <FileSpreadsheet size={15} /> Export Excel
+          </button>
 
           {canEdit && (
             <button className="btn-primary" onClick={handleOpenCreate}>

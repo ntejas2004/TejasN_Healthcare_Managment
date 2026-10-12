@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard';
 import PatientList from './components/PatientList';
 import EncounterList from './components/EncounterList';
 import Analytics from './components/Analytics';
+import AuditLogs from './components/AuditLogs';
 import LoginPage from './components/LoginPage';
 
 function AppShell() {
@@ -34,8 +35,8 @@ function AppShell() {
 
   if (!user) return <LoginPage />;
 
-  // Guard: if analyst somehow ends up on a patient/encounter tab, redirect to analytics
-  const safeTab = (!canViewPatients && (activeTab === 'patients' || activeTab === 'encounters'))
+  // Guard: if analyst somehow ends up on a patient/encounter/audit-logs tab, redirect to analytics
+  const safeTab = (!canViewPatients && (activeTab === 'patients' || activeTab === 'encounters' || activeTab === 'audit-logs'))
     ? 'analytics'
     : activeTab;
 
@@ -45,6 +46,7 @@ function AppShell() {
       case 'patients':    return <PatientList />;
       case 'encounters':  return <EncounterList />;
       case 'analytics':   return <Analytics />;
+      case 'audit-logs':  return <AuditLogs />;
       default:            return isAnalyst ? <Analytics /> : <Dashboard />;
     }
   };

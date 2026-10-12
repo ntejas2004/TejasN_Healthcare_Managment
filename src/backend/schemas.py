@@ -191,3 +191,27 @@ class LengthOfStayItem(BaseModel):
 class CategoryCountItem(BaseModel):
     category: str
     count: int
+
+
+# ------------------------------
+# Audit Log Schemas
+# ------------------------------
+class AuditLogResponse(BaseModel):
+    id: int
+    action: str
+    entity_type: str
+    entity_id: str
+    performed_by: str
+    user_role: Optional[str] = None
+    details: Optional[str] = None
+    timestamp: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class PaginatedAuditLogs(BaseModel):
+    total: int
+    page: int
+    limit: int
+    data: List[AuditLogResponse]

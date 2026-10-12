@@ -77,3 +77,31 @@ CREATE TABLE IF NOT EXISTS encounters (
     INDEX idx_readmitted (readmitted),
     INDEX idx_time_in_hospital (time_in_hospital)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table 4: Users (Role-Based Access Control)
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(80) NOT NULL UNIQUE,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    hashed_password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'analyst',
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_username (username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table 5: Audit Logs (System Action Traceability & Provenance)
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    action VARCHAR(20) NOT NULL,
+    entity_type VARCHAR(50) NOT NULL,
+    entity_id VARCHAR(80) NOT NULL,
+    performed_by VARCHAR(80) NOT NULL,
+    user_role VARCHAR(50),
+    details TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_audit_action (action),
+    INDEX idx_audit_entity (entity_type),
+    INDEX idx_audit_performed_by (performed_by),
+    INDEX idx_audit_timestamp (timestamp)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

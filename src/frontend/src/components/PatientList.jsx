@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getPatients, createPatient, updatePatient, deletePatient } from '../api/client';
-import { Plus, Search, Trash2, Edit, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { getPatients, createPatient, updatePatient, deletePatient, downloadExport } from '../api/client';
+import { Plus, Search, Trash2, Edit, ChevronLeft, ChevronRight, X, Download, FileSpreadsheet } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const PatientList = () => {
@@ -116,6 +116,22 @@ const PatientList = () => {
             />
             <Search size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
           </div>
+
+          <button
+            className="btn-secondary"
+            onClick={() => downloadExport('/export/patients/csv', 'patients_export.csv')}
+            title="Export Patient data to CSV"
+          >
+            <Download size={15} /> Export CSV
+          </button>
+
+          <button
+            className="btn-secondary"
+            onClick={() => downloadExport('/export/patients/excel', 'patients_export.xlsx')}
+            title="Export Patient data to Excel"
+          >
+            <FileSpreadsheet size={15} /> Export Excel
+          </button>
 
           {canEdit && (
             <button className="btn-primary" onClick={handleOpenCreate}>

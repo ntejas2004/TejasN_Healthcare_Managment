@@ -21,11 +21,20 @@ wheels/
 .installed.cfg
 *.egg
 
+# Virtual Environment
+.venv/
+src/.venv/
+env/
+venv/
+
 # Environment variables
 .env
 
 # Node / React / Vite
 node_modules/
+src/frontend/node_modules/
+dist/
+src/frontend/dist/
 frontend/dist/
 frontend/node_modules/
 .npm
@@ -34,6 +43,8 @@ frontend/node_modules/
 # Data artifacts
 data/cleaned/*.csv
 data/processed/*.json
+src/data/cleaned/*.csv
+src/data/processed/*.json
 
 # IDE
 .vscode/

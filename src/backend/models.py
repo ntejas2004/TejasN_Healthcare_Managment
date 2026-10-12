@@ -1,6 +1,21 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean, func
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, func
 from sqlalchemy.orm import relationship
 from database import Base
+
+
+class AuditLog(Base):
+    """SQLAlchemy model tracking all Create, Update, and Delete actions with user provenance."""
+    __tablename__ = "audit_logs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    action = Column(String(20), nullable=False, index=True)          # CREATE | UPDATE | DELETE
+    entity_type = Column(String(50), nullable=False, index=True)     # Patient | Encounter | User
+    entity_id = Column(String(80), nullable=False, index=True)       # e.g., patient_nbr or encounter_id
+    performed_by = Column(String(80), nullable=False, index=True)    # username of user who performed it
+    user_role = Column(String(50), nullable=True)                    # administrator | clinical_operations
+    details = Column(Text, nullable=True)                            # JSON or descriptive diff of the change
+    timestamp = Column(DateTime, server_default=func.now(), index=True)
+
 
 
 class User(Base):

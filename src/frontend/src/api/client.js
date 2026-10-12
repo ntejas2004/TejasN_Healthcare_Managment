@@ -98,4 +98,38 @@ export const deleteEncounter = async (encounterId) => {
   return response.data;
 };
 
+// ── Audit Logs ────────────────────────────────────────────────────────────────
+export const getAuditLogs = async (page = 1, limit = 25, action = '', entityType = '', search = '') => {
+  const params = { page, limit };
+  if (action && action !== 'ALL') params.action = action;
+  if (entityType && entityType !== 'ALL') params.entity_type = entityType;
+  if (search) params.search = search;
+  const response = await client.get('/audit-logs', { params });
+  return response.data;
+};
+
+// ── Scheduled Reports ─────────────────────────────────────────────────────────
+export const getScheduledReports = async () => {
+  const response = await client.get('/reports/scheduled');
+  return response.data;
+};
+
+export const triggerScheduledReport = async () => {
+  const response = await client.post('/reports/trigger');
+  return response.data;
+};
+
+// ── Data Export Helpers ───────────────────────────────────────────────────────
+export const downloadExport = async (endpoint, filename) => {
+  const response = await client.get(endpoint, { responseType: 'blob' });
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  link.parentNode.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
+
 export default client;

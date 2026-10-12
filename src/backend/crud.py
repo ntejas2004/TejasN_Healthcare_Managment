@@ -1,7 +1,62 @@
+import json
 from sqlalchemy.orm import Session
 from sqlalchemy import func, or_
 import models
 import schemas
+
+
+def log_audit(
+    db: Session,
+    action: str,
+    entity_type: str,
+    entity_id: str,
+    performed_by: str,
+    user_role: str = None,
+    details: dict = None
+):
+    """Persist an audit log entry documenting data changes and user provenance."""
+    details_str = json.dumps(details) if isinstance(details, dict) else (str(details) if details else None)
+    log_entry = models.AuditLog(
+        action=action.upper(),
+        entity_type=entity_type,
+        entity_id=str(entity_id),
+        performed_by=performed_by,
+        user_role=user_role,
+        details=details_str
+    )
+    db.add(log_entry)
+    db.commit()
+    db.refresh(log_entry)
+    return log_entry
+
+
+def get_audit_logs(
+    db: Session,
+    page: int = 1,
+    limit: int = 25,
+    action: str = None,
+    entity_type: str = None,
+    search: str = None
+):
+    """Retrieve paginated audit logs with optional filters."""
+    query = db.query(models.AuditLog)
+    if action and action != "ALL":
+        query = query.filter(models.AuditLog.action == action.upper())
+    if entity_type and entity_type != "ALL":
+        query = query.filter(models.AuditLog.entity_type == entity_type)
+    if search:
+        search_fmt = f"%{search}%"
+        query = query.filter(
+            or_(
+                models.AuditLog.entity_id.like(search_fmt),
+                models.AuditLog.performed_by.like(search_fmt),
+                models.AuditLog.details.like(search_fmt)
+            )
+        )
+    total = query.count()
+    offset = (page - 1) * limit
+    data = query.order_by(models.AuditLog.timestamp.desc()).offset(offset).limit(limit).all()
+    return {"total": total, "page": page, "limit": limit, "data": data}
 
 
 # ------------------------------

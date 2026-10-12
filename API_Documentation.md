@@ -181,3 +181,89 @@ Retrieve encounter distribution by length of stay in days.
 
 ### `GET /api/analytics/demographics`
 Retrieve patient demographic distributions by race and gender.
+
+---
+
+## 🛡️ 5. System Audit Log Endpoints
+
+### `GET /api/audit-logs`
+Retrieve paginated system audit logs tracking CREATE, UPDATE, DELETE, and EXPORT activities with the exact user who executed them.
+* **Access**: `administrator`, `clinical_operations`
+* **Query Parameters**:
+  * `page` (int, default=1)
+  * `limit` (int, default=25)
+  * `action` (string, optional) — `CREATE`, `UPDATE`, `DELETE`, `EXPORT`
+  * `entity_type` (string, optional) — `Patient`, `Encounter`, `User`
+  * `search` (string, optional) — filters by `entity_id`, `performed_by`, or `details`
+* **Response (200 OK)**:
+```json
+{
+  "total": 1,
+  "page": 1,
+  "limit": 25,
+  "data": [
+    {
+      "id": 1,
+      "action": "CREATE",
+      "entity_type": "Patient",
+      "entity_id": "99887766",
+      "performed_by": "clinops",
+      "user_role": "clinical_operations",
+      "details": "{\"patient_nbr\": \"99887766\", \"race\": \"Caucasian\", \"gender\": \"Female\", \"age\": \"[50-60)\", \"weight\": \"Unknown\"}",
+      "timestamp": "2026-10-12T19:30:00"
+    }
+  ]
+}
+```
+
+---
+
+## 📤 6. Data Export Endpoints
+
+### `GET /api/export/patients/csv`
+Download patient demographics formatted as a CSV file.
+* **Access**: `administrator`, `clinical_operations`
+* **Response**: Streamed `text/csv` file download.
+
+### `GET /api/export/patients/excel`
+Download patient demographics formatted as an Excel spreadsheet (`.xlsx`).
+* **Access**: `administrator`, `clinical_operations`
+* **Response**: Streamed OpenXML spreadsheet download.
+
+### `GET /api/export/encounters/csv`
+Download hospital encounter records as a CSV file.
+* **Access**: `administrator`, `clinical_operations`
+* **Response**: Streamed `text/csv` file download.
+
+### `GET /api/export/encounters/excel`
+Download hospital encounter records formatted as an Excel spreadsheet (`.xlsx`).
+* **Access**: `administrator`, `clinical_operations`
+* **Response**: Streamed OpenXML spreadsheet download.
+
+---
+
+## ⏰ 7. Scheduled Clinical Reporting Endpoints
+
+### `GET /api/reports/scheduled`
+Retrieve historical automated daily reports generated in the background by APScheduler.
+* **Access**: All authenticated roles (`administrator`, `clinical_operations`, `analyst`)
+* **Response (200 OK)**:
+```json
+[
+  {
+    "timestamp": "2026-10-12 19:30:00",
+    "report_name": "Scheduled Daily Clinical KPI Report",
+    "total_patients": 71518,
+    "total_encounters": 101766,
+    "readmission_rate_pct": 46.09,
+    "avg_length_of_stay_days": 4.4,
+    "avg_num_medications": 16.02,
+    "avg_lab_procedures": 43.1,
+    "status": "COMPLETED"
+  }
+]
+```
+
+### `POST /api/reports/trigger`
+Trigger an immediate execution of the automated daily clinical KPI report.
+* **Access**: All authenticated roles

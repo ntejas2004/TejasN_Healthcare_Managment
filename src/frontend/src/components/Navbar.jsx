@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, Users, FileText, BarChart2, LogOut, ShieldCheck } from 'lucide-react';
+import { Activity, Users, FileText, BarChart2, LogOut, ShieldCheck, History } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 // Role display labels and badge colours
@@ -57,6 +57,16 @@ const Navbar = ({ activeTab, setActiveTab }) => {
         >
           <BarChart2 size={18} /> Analytics
         </button>
+
+        {/* Audit Logs — visible to administrator & clinical operations */}
+        {canViewPatients && (
+          <button
+            className={`nav-btn ${activeTab === 'audit-logs' ? 'active' : ''}`}
+            onClick={() => setActiveTab('audit-logs')}
+          >
+            <History size={18} /> Audit Logs
+          </button>
+        )}
       </div>
 
       {/* User info + logout */}
